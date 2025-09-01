@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ANN Fertilizer Recommendation</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+<style>
+    @import url('https://fonts.googleapis.com/css?family=Montserrat:400,700&display=swap');
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Montserrat', sans-serif;
+    }
+
+    body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background-size: cover;
+        background-position: inherit;
+        font-family: 'Nunito', sans-serif;
+        margin: 0;
+        padding: 0;
+        text-decoration: none;
+        text-transform: capitalize;
+        transition: all .2s linear;
+        padding: 0 10px;
+        min-height: 100vh;
+    }
+
+    .wrapper {
+        max-width: 55rem;
+        width: 100%;
+        background: rgba(255, 255, 255, 0.95);
+        margin: 80px auto 20px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        padding: 40px;
+        border-radius: 15px;
+        backdrop-filter: blur(10px);
+    }
+
+    .wrapper1 {
+        max-width: 55rem;
+        width: 100%;
+        background: linear-gradient(135deg, #1b530a, #2d7a1a);
+        color: white;
+        margin: 20px auto;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        padding: 30px;
+        border-radius: 15px;
+        text-align: center;
+    }
+
+    .error-wrapper {
+        max-width: 55rem;
+        width: 100%;
+        background: linear-gradient(135deg, #dc3545, #c82333);
+        color: white;
+        margin: 20px auto;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        padding: 30px;
+        border-radius: 15px;
+        text-align: center;
+    }
+
+    .wrapper .title {
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 30px;
+        color: #1b530a;
+        text-transform: uppercase;
+        text-align: center;
+        position: relative;
+    }
+
+    .wrapper .title::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 3px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border-radius: 2px;
+    }
+
+    .wrapper .form {
+        width: 100%;
+    }
+
+    .wrapper .form .inputfield {
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        position: relative;
+    }
+
+    .wrapper .form .inputfield label {
+        width: 200px;
+        color: #2c3e50;
+        margin-right: 15px;
+        font-size: 15px;
+        font-weight: 600;
+    }
+
+    .wrapper .form .inputfield .input,
+    .wrapper .form .inputfield .textarea {
+        width: 100%;
+        outline: none;
+        border: 2px solid #e1e8ed;
+        font-size: 15px;
+        padding: 12px 15px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        background: rgba(255, 255, 255, 0.9);
+    }
+
+    .wrapper .form .inputfield .input:focus,
+    .wrapper .form .inputfield .textarea:focus {
+        border: 2px solid #667eea;
+        box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+    }
+
+    .wrapper .form .inputfield .custom_select {
+        position: relative;
+        width: 100%;
+        height: 45px;
+    }
+
+    .wrapper .form .inputfield .custom_select:before {
+        content: "";
+        position: absolute;
+        top: 18px;
+        right: 15px;
+        border: 6px solid;
+        border-color: #667eea transparent transparent transparent;
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    .wrapper .form .inputfield .custom_select select {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        outline: none;
+        width: 100%;
+        height: 100%;
+        border: 0px;
+        padding: 12px 15px;
+        font-size: 15px;
+        border: 2px solid #e1e8ed;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.9);
+        transition: all 0.3s ease;
+    }
+
+    .wrapper .form .inputfield .custom_select select:focus {
+        border: 2px solid #667eea;
+        box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+    }
+
+    .wrapper .form .inputfield .btn {
+        width: 100%;
+        padding: 15px 10px;
+        font-size: 16px;
+        font-weight: 600;
+        border: 0px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: #fff;
+        cursor: pointer;
+        border-radius: 8px;
+        outline: none;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .wrapper .form .inputfield .btn:hover {
+        background: linear-gradient(135deg, #5a6fd8, #6a4190);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+    }
+
+    .confidence-badge {
+        display: inline-block;
+        background: rgba(255, 255, 255, 0.2);
+        padding: 8px 16px;
+        border-radius: 20px;
+        margin-top: 15px;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        padding: 15px 30px;
+        box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    header .logo {
+        font-size: 2rem;
+        font-weight: bolder;
+        color: #1b530a;
+    }
+
+    header .logo i {
+        padding-right: .5rem;
+        color: #667eea;
+    }
+
+    header .navbar a {
+        font-size: 1.6rem;
+        margin-left: 2rem;
+        color: #2c3e50;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    header .navbar a:hover {
+        color: #667eea;
+    }
+
+    #menu-bar {
+        font-size: 2rem;
+        cursor: pointer;
+        color: #667eea;
+        border: .1rem solid #667eea;
+        border-radius: .5rem;
+        padding: .5rem 1rem;
+        display: none;
+    }
+
+    .algorithm-badge {
+        position: absolute;
+        top: -15px;
+        right: 20px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    @media (max-width: 768px) {
+        #menu-bar {
+            display: initial;
+        }
+
+        header .navbar {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-top: .1rem solid rgba(0, 0, 0, .1);
+            clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
+            transition: all 0.3s ease;
+        }
+
+        header .navbar.active {
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%);
+        }
+
+        header .navbar a {
+            margin: 1rem;
+            padding: 1rem 2rem;
+            display: block;
+            border: .1rem solid rgba(0, 0, 0, .1);
+            border-left: .3rem solid #667eea;
+            border-radius: 5px;
+        }
+
+        .wrapper .form .inputfield {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .wrapper .form .inputfield label {
+            margin-bottom: 8px;
+            width: 100%;
+        }
+    }
+</style>
+<body>
+    <header>
+        <a href="#" class="logo"><i class="fas fa-brain"></i>ANN Ferti</a>
+        
+        <div id="menu-bar" class="fas fa-bars"></div>
+        
+        <nav class="navbar">
+            <a href="{{ url_for('home') }}">home</a>
+            <a href="{{ url_for('Detail') }}">Details</a>
+            <a href="{{ url_for('Model1') }}">Random Forest</a>
+            <a href="{{ url_for('ANN') }}">ANN Model</a>
+        </nav>
+    </header>
+
+    <div class="wrapper">
+        <div class="algorithm-badge">Neural Network</div>
+        <div class="title">
+            ANN Fertilizer Recommendation
+        </div>
+        <form method="post" action="{{ url_for('predict_ann') }}" class="form">
+            <div class="inputfield">
+                <label for="temp">Temperature (°C)</label>
+                <input type="number" class="input" name="temp" id="temp" step="0.1" required>
+            </div>
+            <div class="inputfield">
+                <label for="humid">Humidity (%)</label>
+                <input type="number" class="input" name="humid" id="humid" min="0" max="100" step="0.1" required>
+            </div>
+            <div class="inputfield">
+                <label for="mois">Moisture (%):</label>
+                <input type="number" class="input" name="mois" id="mois" min="0" max="100" step="0.1" required>
+            </div>
+            <div class="inputfield">
+                <label for="soil">Soil Type:</label>
+                <div class="custom_select">
+                    <select name="soil" id="soil" required>
+                        <option value="">Select Soil Type</option>
+                        <option value="0">Black</option>
+                        <option value="1">Clayey</option>
+                        <option value="2">Loamy</option>
+                        <option value="3">Red</option>
+                        <option value="4">Sandy</option>
+                    </select>
+                </div>
+            </div>
+            <div class="inputfield">
+                <label for="crop">Crop Type:</label>
+                <div class="custom_select">
+                    <select name="crop" id="crop" required>
+                        <option value="">Select Crop Type</option>
+                        <option value="0">Barley</option>
+                        <option value="1">Cotton</option>
+                        <option value="2">Ground Nuts</option>
+                        <option value="3">Maize</option>
+                        <option value="4">Millets</option>
+                        <option value="5">Oil Seeds</option>
+                        <option value="6">Paddy</option>
+                        <option value="7">Pulses</option>
+                        <option value="8">Sugarcane</option>
+                        <option value="9">Tobacco</option>
+                        <option value="10">Wheat</option>
+                        <option value="11">Coffee</option>
+                        <option value="12">Kidney Beans</option>
+                        <option value="13">Orange</option>
+                        <option value="14">Pomegranate</option>
+                        <option value="15">Rice</option>
+                        <option value="16">Watermelon</option>
+                    </select>
+                </div>
+            </div>
+            <div class="inputfield">
+                <label for="nitro">Nitrogen (N):</label>
+                <input type="number" class="input" name="nitro" id="nitro" min="0" step="0.1" required>
+            </div>
+            <div class="inputfield">
+                <label for="pota">Potassium (K):</label>
+                <input type="number" class="input" name="pota" id="pota" min="0" step="0.1" required>
+            </div>
+            <div class="inputfield">
+                <label for="phos">Phosphorous (P):</label>
+                <input type="number" class="input" name="phos" id="phos" min="0" step="0.1" required>
+            </div>
+            <div class="inputfield">
+                <button type="submit" class="btn">
+                    <i class="fas fa-brain"></i> Predict with ANN
+                </button>
+            </div>
+        </form>
+    </div>
+
+    {% if prediction %}
+    <div class="wrapper1">
+        <h1><i class="fas fa-check-circle"></i> ANN Recommendation</h1>
+        <h2 style="font-size: 2.5rem; margin: 20px 0;">{{ prediction }}</h2>
+        {% if confidence %}
+        <div class="confidence-badge">
+            <i class="fas fa-chart-line"></i> Confidence: {{ confidence }}
+        </div>
+        {% endif %}
+        <p style="margin-top: 20px; font-size: 1.1rem; opacity: 0.9;">
+            This recommendation is generated using our Advanced Neural Network model
+        </p>
+    </div>
+    {% endif %}
+
+    {% if error %}
+    <div class="error-wrapper">
+        <h1><i class="fas fa-exclamation-triangle"></i> Error</h1>
+        <p style="font-size: 1.2rem; margin-top: 15px;">{{ error }}</p>
+    </div>
+    {% endif %}
+
+    <script>
+        let menu = document.querySelector('#menu-bar');
+        let navbar = document.querySelector('.navbar');
+
+        menu.onclick = () => {
+            menu.classList.toggle('fa-times');
+            navbar.classList.toggle('active');
+        }
+
+        window.onscroll = () => {
+            menu.classList.remove('fa-times');
+            navbar.classList.remove('active');
+        }
+
+        // Add some interactive feedback
+        document.querySelectorAll('.input, select').forEach(element => {
+            element.addEventListener('focus', function() {
+                this.style.transform = 'scale(1.02)';
+            });
+            
+            element.addEventListener('blur', function() {
+                this.style.transform = 'scale(1)';
+            });
+        });
+    </script>
+</body>
+</html>

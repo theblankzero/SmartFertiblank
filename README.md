@@ -40,6 +40,28 @@ Support Vector Machine (SVM): SVM is a versatile algorithm used for classificati
 Despite the high accuracy achieved by Random Forest and SVM.
 *Random Forest Classifier* is used for development of model.
 
+## ANN (Artificial Neural Network) Implementation
+
+In addition to the Random Forest classifier, this project now includes an Advanced Artificial Neural Network (ANN) model for fertilizer recommendation. The ANN model provides:
+
+- **Deep Learning Approach**: Multi-layer neural network with dropout regularization
+- **High Accuracy**: Trained on the same dataset with advanced optimization
+- **Confidence Scoring**: Provides prediction confidence levels
+- **Modern Architecture**: Built using TensorFlow/Keras
+
+### ANN Model Features:
+- 4-layer neural network (128, 64, 32 neurons + output layer)
+- Dropout layers for regularization (30% and 20%)
+- Adam optimizer with sparse categorical crossentropy loss
+- Batch normalization and feature scaling
+- Real-time prediction with confidence scores
+
+### Setup ANN Model:
+1. Install requirements: `pip install -r requirements.txt`
+2. Run setup script: `python setup_ann.py`
+3. Start the application: `python main.py`
+4. Access ANN model at `/ANN` route
+
 
 # Website Development
 develop a fully responsive website that serves as a user-friendly interface for our fertilizer recommendation system. The website will have two main pages:
